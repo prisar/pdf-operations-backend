@@ -1,22 +1,20 @@
 const express = require('express');
 const validate = require('express-validation');
 const controller = require('../../controllers/pdf.controller');
-const { authorize } = require('../../middlewares/auth');
 const {
-  login,
-  resetPassword,
-} = require('../../validations/auth.validation');
+  upload,
+} = require('../../validations/pdf.validation');
 
 const router = express.Router();
 
 router
   .route('/upload')
   /**
-   * @api {post} api/v1/pdf/upload Login
-   * @apiDescription Get an accessToken
+   * @api {post} api/v1/pdf/upload Upload
+   * @apiDescription Upload a pdf
    * @apiVersion 1.0.0
-   * @apiName Login
-   * @apiGroup Auth
+   * @apiName Upload
+   * @apiGroup Pdf
    * @apiPermission public
    *
    * @apiParam  {String}         file  User's pdf
@@ -24,6 +22,6 @@ router
    * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
    * @apiError (Unauthorized 401)  Unauthorized     Incorrect username or password
    */
-  .post(controller.upload);
+  .post(validate(upload), controller.upload);
 
 module.exports = router;
