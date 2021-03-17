@@ -9,5 +9,10 @@ module.exports = {
       firstPdf: Joi.string().required(),
       secondPdf: Joi.string().required()
     }
+  },
+  download: {
+    query: {
+      file: Joi.string().required(),
+    }
   }
 };

@@ -1,7 +1,7 @@
 const express = require("express");
 const validate = require("express-validation");
 const controller = require("../../controllers/pdf.controller");
-const { upload, merge } = require("../../validations/pdf.validation");
+const { upload, merge, download } = require("../../validations/pdf.validation");
 
 const router = express.Router();
 
@@ -21,6 +21,23 @@ router
    * @apiError (Unauthorized 401)  Unauthorized     Incorrect username or password
    */
   .post(validate(upload), controller.upload);
+
+router
+  .route("/download")
+  /**
+   * @api {post} api/v1/pdf/download Download
+   * @apiDescription Download pdf
+   * @apiVersion 1.0.0
+   * @apiName Download
+   * @apiGroup Pdf
+   * @apiPermission public
+   *
+   * @apiParam  {String}         file  Filename
+   *
+   * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
+   * @apiError (Unauthorized 401)  Unauthorized    Invalid token
+   */
+  .get(validate(download), controller.download);
 
 router
   .route("/merge")

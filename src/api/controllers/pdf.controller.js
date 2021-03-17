@@ -18,10 +18,25 @@ exports.upload = async (req, res, next) => {
     uploadPath = __basedir + "/files/" + pdfFile.name;
 
     pdfFile.mv(uploadPath, function (err) {
-      if (err) return res.json({ code: httpStatus.OK, message: "err", file: "filename" });
+      if (err) return res.json({ code: httpStatus.BAD_REQUEST, message: "err", file: pdfFile.name });
 
       return res.json({ code: httpStatus.OK, message: "Pdf uploaded successfully", file: pdfFile.name });
     });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+/**
+ * download pdf
+ * @public
+ */
+ exports.download = async (req, res, next) => {
+  try {
+    const fileName = req.query.file;
+    const file = `${__basedir}/files/${fileName}`;
+    // TODO: check if file exists
+    return res.download(file);
   } catch (error) {
     return next(error);
   }
@@ -35,6 +50,7 @@ exports.merge = async (req, res, next) => {
   try {
     const firstPdf = req.body.firstPdf;
     const secondPdf = req.body.secondPdf;
+    // TODO: check if files exists
     const outputfile = await AdobeService.merge(firstPdf, secondPdf);
     return res.json({ code: httpStatus.OK, message: "Pdf merged successfully", file: outputfile });
   } catch (error) {
