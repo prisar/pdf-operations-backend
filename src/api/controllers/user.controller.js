@@ -3,7 +3,6 @@ const User = require('../models/user.model');
 
 /**
  * Create app user
- * @TODO: Role implementation
  * @public
  */
 exports.create = async (req, res, next) => {

@@ -14,3 +14,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# adobe keys
+private.key
+pdftools-api-credentials.json
