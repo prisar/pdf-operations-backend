@@ -8,6 +8,8 @@ const mongoose = require('./config/mongoose');
 // // open mongoose connection
 mongoose.connect();
 
+global.__basedir = __dirname;
+
 // // listen to requests
 app.listen(port, () => console.info(`server started on port ${port} (${env})`));
 

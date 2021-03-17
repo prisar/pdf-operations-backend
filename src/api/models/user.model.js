@@ -159,13 +159,14 @@ userSchema.statics = {
         return user;
       }
       err.status = httpStatus.UNAUTHORIZED;
-      err.message = 'Incorrect email or password';
+      err.message = 'Incorrect credentials';
     }
     throw new APIError(err);
   },
 
   async generatepassword() {
     const password = generator.generate();
+    // console.log('password: ', password);
     // Salt rounds is kept same as core
     const passwordhash = await bcrypt.hash(password, 10);
     return { password, passwordhash };

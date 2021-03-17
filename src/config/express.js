@@ -9,6 +9,7 @@ const routes = require('../api/routes');
 const { middlewareLogger } = require('./logger');
 const strategies = require('./passport');
 const error = require('../api/middlewares/error');
+const fileUpload = require('express-fileupload');
 
 /**
 * Express instance
@@ -31,7 +32,7 @@ app.use(compress());
 app.use(methodOverride());
 
 // secure apps by setting various HTTP headers
-app.use(helmet());
+// app.use(helmet());
 
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
@@ -40,14 +41,17 @@ app.use(cors());
 app.use(passport.initialize());
 passport.use('jwt', strategies.jwt);
 
+// enable file upload
+app.use(fileUpload());
+
 // mount api v1 routes
 app.use(routes);
 
 // if error is not an instanceOf APIError, convert it.
 app.use(error.converter);
 
-// catch 404 and forward to error handler
-app.use(error.notFound);
+// // catch 404 and forward to error handler
+// app.use(error.notFound);
 
 // error handler, send stacktrace only during development
 app.use(error.handler);
