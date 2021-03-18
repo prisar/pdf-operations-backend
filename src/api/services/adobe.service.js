@@ -1,4 +1,5 @@
 const orderBy = require("lodash/orderBy");
+const fs = require("fs");
 
 const PDFToolsSdk = require("@adobe/documentservices-pdftools-node-sdk");
 
@@ -18,6 +19,10 @@ exports.merge = async (firstPdf, secondPdf) => {
     combineFilesOperation.addInput(combineSource2);
 
     const outputFile = `${firstPdf.replace(".pdf", "")}_${secondPdf.replace(".pdf", "")}_merged.pdf`;
+    const outpath = `${__basedir}/files/${outputFile}`;
+    if (fs.existsSync(outpath)) {
+      fs.unlinkSync(outpath);
+    }
 
     // Execute the operation and Save the result to the specified location.
     combineFilesOperation
@@ -43,7 +48,6 @@ exports.split = async (pdfFile, pages, pageRangesInput) => {
 
     // Create an ExecutionContext using credentials
     const executionContext = PDFToolsSdk.ExecutionContext.create(credentials);
-    console.log(`${__basedir}/files/${pdfFile}`);
 
     // Create a new operation instance.
     const splitPDFOperation = PDFToolsSdk.SplitPDF.Operation.createNew(),
@@ -144,16 +148,15 @@ exports.reorder = async (pdfFile, pageIndexes) => {
     orderedIndexes.map((orderedIndex) => {
       const indexType = orderedIndex.type;
       // single page
-      if (indexType === 'page') {
+      if (indexType === "page") {
         const pageNo = orderedIndex.page;
         // Add page
         pageRanges.addSinglePage(pageNo);
         return;
       }
       // range of pages
-      if (indexType === 'range') {
-        const { range } = { ...orderedIndex};
-        console.log('range', range);
+      if (indexType === "range") {
+        const { range } = { ...orderedIndex };
         // Add pages start to end.
         pageRanges.addPageRange(range.start, range.end);
         return;
