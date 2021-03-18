@@ -7,7 +7,8 @@
     "start": "nodemon ./src/index.js"
   },
   "keywords": [
-    "stocks"
+    "heroku",
+    "pdf"
   ],
   "author": "prisar",
   "license": "MIT",
@@ -46,5 +47,8 @@
     "eslint": "^6.4.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "nodemon": "^1.19.2"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
