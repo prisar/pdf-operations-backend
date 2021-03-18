@@ -41,7 +41,7 @@ exports.split = async (pdfFile, pages, pageRangesInput) => {
 
     // Create an ExecutionContext using credentials
     const executionContext = PDFToolsSdk.ExecutionContext.create(credentials);
-    console.log(`${__basedir}/files/${pdfFile}`)
+    console.log(`${__basedir}/files/${pdfFile}`);
 
     // Create a new operation instance.
     const splitPDFOperation = PDFToolsSdk.SplitPDF.Operation.createNew(),
@@ -69,6 +69,46 @@ exports.split = async (pdfFile, pages, pageRangesInput) => {
         }
         return Promise.all(saveFilesPromises);
       })
+      .catch((err) => {
+        if (err instanceof PDFToolsSdk.Error.ServiceApiError || err instanceof PDFToolsSdk.Error.ServiceUsageError) {
+          console.log("Exception encountered while executing operation", err);
+        } else {
+          console.log("Exception encountered while executing operation", err);
+        }
+      });
+  } catch (err) {
+    console.log("Exception encountered while executing operation", err);
+  }
+};
+
+exports.delete = async (pdfFile, pages, pageRangesInput) => {
+  try {
+    // Initial setup, create credentials instance.
+    const credentials = PDFToolsSdk.Credentials.serviceAccountCredentialsBuilder().fromFile("pdftools-api-credentials.json").build();
+
+    // Create an ExecutionContext using credentials and create a new operation instance.
+    const executionContext = PDFToolsSdk.ExecutionContext.create(credentials),
+      deletePagesOperation = PDFToolsSdk.DeletePages.Operation.createNew();
+
+    // Set operation input from a source file.
+    const input = PDFToolsSdk.FileRef.createFromLocalFile(`${__basedir}/files/${pdfFile}`);
+    deletePagesOperation.setInput(input);
+
+    // Delete pages of the document (as specified by PageRanges).
+    // then,
+    // Specify pages for deletion.
+    const pageRangesForDeletion = new PDFToolsSdk.PageRanges();
+    // Add pages
+    pages.map((page) => pageRangesForDeletion.addSinglePage(page));
+
+    // Add page ranges
+    pageRangesInput.forEach((e) => pageRangesForDeletion.addPageRange(e.range.start, e.range.end));
+    deletePagesOperation.setPageRanges(pageRangesForDeletion);
+
+    // Execute the operation and Save the result to the specified location.
+    deletePagesOperation
+      .execute(executionContext)
+      .then((result) => result.saveAsFile(`${__basedir}/files/deletePagesOutput.pdf`))
       .catch((err) => {
         if (err instanceof PDFToolsSdk.Error.ServiceApiError || err instanceof PDFToolsSdk.Error.ServiceUsageError) {
           console.log("Exception encountered while executing operation", err);

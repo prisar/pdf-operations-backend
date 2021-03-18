@@ -67,10 +67,24 @@ exports.merge = async (req, res, next) => {
     const { pdfFile } = { ...req.body };
     const { pages } = { ...req.body };
     const { pageRanges } = { ...req.body };
-    console.log('pages', pages);
-    console.log('pageRanges', pageRanges);
     const outputfiles = await AdobeService.split(pdfFile, pages, pageRanges);
-    return res.json({ code: httpStatus.OK, message: "Pdf merged successfully", files: `outputfiles` });
+    return res.json({ code: httpStatus.OK, message: "Pdf splited successfully", files: `outputfiles` });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+/**
+ * delete pages
+ * @public
+ */
+ exports.delete = async (req, res, next) => {
+  try {
+    const { pdfFile } = { ...req.body };
+    const { pages } = { ...req.body };
+    const { pageRanges } = { ...req.body };
+    const outputfiles = await AdobeService.delete(pdfFile, pages, pageRanges);
+    return res.json({ code: httpStatus.OK, message: "Pdf pages deleted successfully", files: `outputfiles` });
   } catch (error) {
     return next(error);
   }

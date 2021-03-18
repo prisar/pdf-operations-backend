@@ -1,7 +1,7 @@
 const express = require("express");
 const validate = require("express-validation");
 const controller = require("../../controllers/pdf.controller");
-const { upload, download, merge, split } = require("../../validations/pdf.validation");
+const { upload, download, merge, split, deletePages } = require("../../validations/pdf.validation");
 
 const router = express.Router();
 
@@ -74,5 +74,24 @@ router
    * @apiError (Unauthorized 401) Unauthorized      Invalid token
    */
   .post(validate(split), controller.split);
+
+router
+  .route("/delete")
+  /**
+   * @api {post} api/v1/pdf/delete Delete
+   * @apiDescription Delete pdf pages
+   * @apiVersion 1.0.0
+   * @apiName Delete pages
+   * @apiGroup Pdf
+   * @apiPermission public
+   *
+   * @apiParam  {String}         pdfFile            Pdf File
+   * @apiParam  {array}          pages              pages
+   * @apiParam  {array}          pageRanges         page ranges
+   *
+   * @apiError (Bad Request 400)  ValidationError   Some parameters may contain invalid values
+   * @apiError (Unauthorized 401) Unauthorized      Invalid token
+   */
+  .post(validate(deletePages), controller.delete);
 
 module.exports = router;

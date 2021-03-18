@@ -21,5 +21,12 @@ module.exports = {
       pages: Joi.array(),
       pageRanges: Joi.array()
     }
+  },
+  deletePages: {
+    body: {
+      pdfFile: Joi.string().required(),
+      pages: Joi.array(),
+      pageRanges: Joi.array()
+    }
   }
 };
