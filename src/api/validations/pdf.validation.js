@@ -28,5 +28,11 @@ module.exports = {
       pages: Joi.array(),
       pageRanges: Joi.array()
     }
+  },
+  reorder: {
+    body: {
+      pdfFile: Joi.string().required(),
+      pageIdexes: Joi.array()
+    }
   }
 };

@@ -1,3 +1,5 @@
+const orderBy = require("lodash/orderBy");
+
 const PDFToolsSdk = require("@adobe/documentservices-pdftools-node-sdk");
 
 exports.merge = async (firstPdf, secondPdf) => {
@@ -109,6 +111,62 @@ exports.delete = async (pdfFile, pages, pageRangesInput) => {
     deletePagesOperation
       .execute(executionContext)
       .then((result) => result.saveAsFile(`${__basedir}/files/deletePagesOutput.pdf`))
+      .catch((err) => {
+        if (err instanceof PDFToolsSdk.Error.ServiceApiError || err instanceof PDFToolsSdk.Error.ServiceUsageError) {
+          console.log("Exception encountered while executing operation", err);
+        } else {
+          console.log("Exception encountered while executing operation", err);
+        }
+      });
+  } catch (err) {
+    console.log("Exception encountered while executing operation", err);
+  }
+};
+
+exports.reorder = async (pdfFile, pageIndexes) => {
+  try {
+    // Initial setup, create credentials instance.
+    const credentials = PDFToolsSdk.Credentials.serviceAccountCredentialsBuilder().fromFile("pdftools-api-credentials.json").build();
+
+    // Create an ExecutionContext using credentials and create a new operation instance.
+    const executionContext = PDFToolsSdk.ExecutionContext.create(credentials),
+      reorderPagesOperation = PDFToolsSdk.ReorderPages.Operation.createNew();
+
+    // Set operation input from a source file, along with specifying the order of the pages for
+    // rearranging the pages in a PDF file.
+    const input = PDFToolsSdk.FileRef.createFromLocalFile(`${__basedir}/files/${pdfFile}`);
+
+    // Specify order of the pages for an output document.
+    const pageRanges = new PDFToolsSdk.PageRanges();
+
+    const orderedIndexes = orderBy(pageIndexes, ["index"], ["asc"]);
+
+    orderedIndexes.map((orderedIndex) => {
+      const indexType = orderedIndex.type;
+      // single page
+      if (indexType === 'page') {
+        const pageNo = orderedIndex.page;
+        // Add page
+        pageRanges.addSinglePage(pageNo);
+        return;
+      }
+      // range of pages
+      if (indexType === 'range') {
+        const { range } = { ...orderedIndex};
+        console.log('range', range);
+        // Add pages start to end.
+        pageRanges.addPageRange(range.start, range.end);
+        return;
+      }
+    });
+
+    reorderPagesOperation.setInput(input);
+    reorderPagesOperation.setPagesOrder(pageRanges);
+
+    // Execute the operation and Save the result to the specified location.
+    reorderPagesOperation
+      .execute(executionContext)
+      .then((result) => result.saveAsFile(`${__basedir}/files/reorderPagesOutput.pdf`))
       .catch((err) => {
         if (err instanceof PDFToolsSdk.Error.ServiceApiError || err instanceof PDFToolsSdk.Error.ServiceUsageError) {
           console.log("Exception encountered while executing operation", err);

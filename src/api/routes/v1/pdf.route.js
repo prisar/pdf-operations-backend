@@ -1,7 +1,7 @@
 const express = require("express");
 const validate = require("express-validation");
 const controller = require("../../controllers/pdf.controller");
-const { upload, download, merge, split, deletePages } = require("../../validations/pdf.validation");
+const { upload, download, merge, split, deletePages, reorder } = require("../../validations/pdf.validation");
 
 const router = express.Router();
 
@@ -93,5 +93,23 @@ router
    * @apiError (Unauthorized 401) Unauthorized      Invalid token
    */
   .post(validate(deletePages), controller.delete);
+
+router
+  .route("/reorder")
+  /**
+   * @api {post} api/v1/pdf/reorder Reorder
+   * @apiDescription Reorder pdf pages
+   * @apiVersion 1.0.0
+   * @apiName Reorder pages
+   * @apiGroup Pdf
+   * @apiPermission public
+   *
+   * @apiParam  {String}         pdfFile            Pdf File
+   * @apiParam  {array}          pageIdexes         Page Indexes or the new order of pages
+   *
+   * @apiError (Bad Request 400)  ValidationError   Some parameters may contain invalid values
+   * @apiError (Unauthorized 401) Unauthorized      Invalid token
+   */
+  .post(validate(reorder), controller.reorder);
 
 module.exports = router;

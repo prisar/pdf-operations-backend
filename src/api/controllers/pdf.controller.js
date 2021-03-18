@@ -89,3 +89,18 @@ exports.merge = async (req, res, next) => {
     return next(error);
   }
 };
+
+/**
+ * reorder pages
+ * @public
+ */
+ exports.reorder = async (req, res, next) => {
+  try {
+    const { pdfFile } = { ...req.body };
+    const { pageIndexes } = { ...req.body };
+    const outputfile = await AdobeService.reorder(pdfFile, pageIndexes);
+    return res.json({ code: httpStatus.OK, message: "Pdf pages reordered successfully", file: `outputfile` });
+  } catch (error) {
+    return next(error);
+  }
+};
