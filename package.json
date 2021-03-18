@@ -4,7 +4,8 @@
   "description": "Web app backend that allows two Yrms to sign an agreement by leveraging Adobe Sign API",
   "main": "./src/index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js"
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js"
   },
   "keywords": [
     "heroku",
