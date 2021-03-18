@@ -57,3 +57,21 @@ exports.merge = async (req, res, next) => {
     return next(error);
   }
 };
+
+/**
+ * split pdf
+ * @public
+ */
+ exports.split = async (req, res, next) => {
+  try {
+    const { pdfFile } = { ...req.body };
+    const { pages } = { ...req.body };
+    const { pageRanges } = { ...req.body };
+    console.log('pages', pages);
+    console.log('pageRanges', pageRanges);
+    const outputfiles = await AdobeService.split(pdfFile, pages, pageRanges);
+    return res.json({ code: httpStatus.OK, message: "Pdf merged successfully", files: `outputfiles` });
+  } catch (error) {
+    return next(error);
+  }
+};

@@ -4,15 +4,22 @@ module.exports = {
   // POST /api/v1/pdf/upload
   upload: {
   },
+  download: {
+    query: {
+      file: Joi.string().required(),
+    }
+  },
   merge: {
     body: {
       firstPdf: Joi.string().required(),
       secondPdf: Joi.string().required()
     }
   },
-  download: {
-    query: {
-      file: Joi.string().required(),
+  split: {
+    body: {
+      pdfFile: Joi.string().required(),
+      pages: Joi.array(),
+      pageRanges: Joi.array()
     }
   }
 };

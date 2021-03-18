@@ -15,7 +15,7 @@ exports.merge = async (firstPdf, secondPdf) => {
     combineFilesOperation.addInput(combineSource1);
     combineFilesOperation.addInput(combineSource2);
 
-    const outputFile = `${firstPdf.replace('.pdf', '')}_${secondPdf.replace('.pdf', '')}_merged.pdf`;
+    const outputFile = `${firstPdf.replace(".pdf", "")}_${secondPdf.replace(".pdf", "")}_merged.pdf`;
 
     // Execute the operation and Save the result to the specified location.
     combineFilesOperation
@@ -28,7 +28,54 @@ exports.merge = async (firstPdf, secondPdf) => {
           console.log("Exception encountered while executing operation", err);
         }
       });
-   return outputFile;
+    return outputFile;
+  } catch (err) {
+    console.log("Exception encountered while executing operation", err);
+  }
+};
+
+exports.split = async (pdfFile, pages, pageRangesInput) => {
+  try {
+    // Initial setup, create credentials instance.
+    const credentials = PDFToolsSdk.Credentials.serviceAccountCredentialsBuilder().fromFile("pdftools-api-credentials.json").build();
+
+    // Create an ExecutionContext using credentials
+    const executionContext = PDFToolsSdk.ExecutionContext.create(credentials);
+    console.log(`${__basedir}/files/${pdfFile}`)
+
+    // Create a new operation instance.
+    const splitPDFOperation = PDFToolsSdk.SplitPDF.Operation.createNew(),
+      input = PDFToolsSdk.FileRef.createFromLocalFile(`${__basedir}/files/${pdfFile}`, PDFToolsSdk.SplitPDF.SupportedSourceFormat.pdf);
+    // Set operation input from a source file.
+    splitPDFOperation.setInput(input);
+
+    // Set the page ranges where each page range corresponds to a single output file.
+    // Specify pages ranges.
+    const pageRanges = new PDFToolsSdk.PageRanges();
+    // Add page
+    pages.map((page) => pageRanges.addSinglePage(page));
+
+    // Add pages ranges
+    pageRangesInput.forEach((e) => pageRanges.addPageRange(e.range.start, e.range.end));
+    splitPDFOperation.setPageRanges(pageRanges);
+
+    // Execute the operation and Save the result to the specified location.
+    splitPDFOperation
+      .execute(executionContext)
+      .then((result) => {
+        let saveFilesPromises = [];
+        for (let i = 0; i < result.length; i++) {
+          saveFilesPromises.push(result[i].saveAsFile(`${__basedir}/files/SplitPDFByPageRangesOutput_${i}.pdf`));
+        }
+        return Promise.all(saveFilesPromises);
+      })
+      .catch((err) => {
+        if (err instanceof PDFToolsSdk.Error.ServiceApiError || err instanceof PDFToolsSdk.Error.ServiceUsageError) {
+          console.log("Exception encountered while executing operation", err);
+        } else {
+          console.log("Exception encountered while executing operation", err);
+        }
+      });
   } catch (err) {
     console.log("Exception encountered while executing operation", err);
   }
