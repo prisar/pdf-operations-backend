@@ -145,6 +145,7 @@ userSchema.statics = {
     const user = await this.findOne({
       $or: [
         { username },
+        { email:  username},
         { phone: username },
         { phones: { $in: username } },
       ],
