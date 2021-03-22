@@ -105,16 +105,21 @@ exports.delete = async (pdfFile, pages, pageRangesInput) => {
     // Specify pages for deletion.
     const pageRangesForDeletion = new PDFToolsSdk.PageRanges();
     // Add pages
-    pages.map((page) => pageRangesForDeletion.addSinglePage(page));
+    pages.map((page) => pageRangesForDeletion.addSinglePage(parseInt(page)));
 
     // Add page ranges
-    pageRangesInput.forEach((e) => pageRangesForDeletion.addPageRange(e.range.start, e.range.end));
+    pageRangesInput.map((e) => pageRangesForDeletion.addPageRange(parseInt(e.range.start), parseInt(e.range.end)));
     deletePagesOperation.setPageRanges(pageRangesForDeletion);
+
+    const outpath = `${__basedir}/files/deletePagesOutput.pdf`;
+    if (fs.existsSync(outpath)) {
+      fs.unlinkSync(outpath);
+    }
 
     // Execute the operation and Save the result to the specified location.
     deletePagesOperation
       .execute(executionContext)
-      .then((result) => result.saveAsFile(`${__basedir}/files/deletePagesOutput.pdf`))
+      .then(async (result) => await result.saveAsFile(`${__basedir}/files/deletePagesOutput.pdf`))
       .catch((err) => {
         if (err instanceof PDFToolsSdk.Error.ServiceApiError || err instanceof PDFToolsSdk.Error.ServiceUsageError) {
           console.log("Exception encountered while executing operation", err);
@@ -122,6 +127,7 @@ exports.delete = async (pdfFile, pages, pageRangesInput) => {
           console.log("Exception encountered while executing operation", err);
         }
       });
+    return 'deletePagesOutput.pdf';
   } catch (err) {
     console.log("Exception encountered while executing operation", err);
   }

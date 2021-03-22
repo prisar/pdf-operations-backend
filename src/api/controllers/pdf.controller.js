@@ -83,8 +83,8 @@ exports.merge = async (req, res, next) => {
     const { pdfFile } = { ...req.body };
     const { pages } = { ...req.body };
     const { pageRanges } = { ...req.body };
-    const outputfiles = await AdobeService.delete(pdfFile, pages, pageRanges);
-    return res.json({ code: httpStatus.OK, message: "Pdf pages deleted successfully", files: `outputfiles` });
+    const outputfile = await AdobeService.delete(pdfFile, pages, pageRanges);
+    return res.json({ code: httpStatus.OK, message: "Pdf pages deleted successfully", file: outputfile });
   } catch (error) {
     return next(error);
   }
