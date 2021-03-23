@@ -31,7 +31,7 @@ exports.upload = async (req, res, next) => {
  * download pdf
  * @public
  */
- exports.download = async (req, res, next) => {
+exports.download = async (req, res, next) => {
   try {
     const fileName = req.query.file;
     const file = `${__basedir}/files/${fileName}`;
@@ -62,13 +62,13 @@ exports.merge = async (req, res, next) => {
  * split pdf
  * @public
  */
- exports.split = async (req, res, next) => {
+exports.split = async (req, res, next) => {
   try {
     const { pdfFile } = { ...req.body };
     const { pages } = { ...req.body };
     const { pageRanges } = { ...req.body };
     const outputfiles = await AdobeService.split(pdfFile, pages, pageRanges);
-    return res.json({ code: httpStatus.OK, message: "Pdf splited successfully", files: `outputfiles` });
+    return res.json({ code: httpStatus.OK, message: "Pdf splited successfully", files: { first: "SplitPDFByPageRangesOutput_0.pdf", second: "SplitPDFByPageRangesOutput_1.pdf" } });
   } catch (error) {
     return next(error);
   }
@@ -78,7 +78,7 @@ exports.merge = async (req, res, next) => {
  * delete pages
  * @public
  */
- exports.delete = async (req, res, next) => {
+exports.delete = async (req, res, next) => {
   try {
     const { pdfFile } = { ...req.body };
     const { pages } = { ...req.body };
@@ -94,12 +94,12 @@ exports.merge = async (req, res, next) => {
  * reorder pages
  * @public
  */
- exports.reorder = async (req, res, next) => {
+exports.reorder = async (req, res, next) => {
   try {
     const { pdfFile } = { ...req.body };
     const { pageIndexes } = { ...req.body };
     const outputfile = await AdobeService.reorder(pdfFile, pageIndexes);
-    return res.json({ code: httpStatus.OK, message: "Pdf pages reordered successfully", file: `outputfile` });
+    return res.json({ code: httpStatus.OK, message: "Pdf pages reordered successfully", file: `reorderPagesOutput.pdf` });
   } catch (error) {
     return next(error);
   }

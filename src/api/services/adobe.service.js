@@ -70,7 +70,12 @@ exports.split = async (pdfFile, pages, pageRangesInput) => {
       .execute(executionContext)
       .then((result) => {
         let saveFilesPromises = [];
+
         for (let i = 0; i < result.length; i++) {
+          const outpath = `${__basedir}/files/SplitPDFByPageRangesOutput_${i}.pdf`;
+          if (fs.existsSync(outpath)) {
+            fs.unlinkSync(outpath);
+          }
           saveFilesPromises.push(result[i].saveAsFile(`${__basedir}/files/SplitPDFByPageRangesOutput_${i}.pdf`));
         }
         return Promise.all(saveFilesPromises);
@@ -127,7 +132,7 @@ exports.delete = async (pdfFile, pages, pageRangesInput) => {
           console.log("Exception encountered while executing operation", err);
         }
       });
-    return 'deletePagesOutput.pdf';
+    return "deletePagesOutput.pdf";
   } catch (err) {
     console.log("Exception encountered while executing operation", err);
   }
@@ -171,6 +176,11 @@ exports.reorder = async (pdfFile, pageIndexes) => {
 
     reorderPagesOperation.setInput(input);
     reorderPagesOperation.setPagesOrder(pageRanges);
+
+    const outpath = `${__basedir}/files/reorderPagesOutput.pdf`;
+    if (fs.existsSync(outpath)) {
+      fs.unlinkSync(outpath);
+    }
 
     // Execute the operation and Save the result to the specified location.
     reorderPagesOperation
