@@ -16,8 +16,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # adobe keys
-private.key
-pdftools-api-credentials.json
+# private.key
+# pdftools-api-credentials.json
 
 # pdf files
-src/files/*.pdf
+!src/files/*input.pdf
